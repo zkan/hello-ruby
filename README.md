@@ -1,2 +1,1 @@
-# hello-ruby
-Hello, Ruby!
+# Hello, Ruby!
