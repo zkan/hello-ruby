@@ -1,4 +1,4 @@
-require "minitest"
+require "minitest/autorun"
 
 class LobsterRoll
   def size
@@ -23,5 +23,3 @@ class LobsterRollTest < Minitest::Test
     assert_equal :big, @roll.size
   end
 end
-
-Minitest.run(ARGV)
