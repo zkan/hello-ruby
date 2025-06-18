@@ -1,4 +1,4 @@
-class StripProvider
+class StripeProvider
   def charge(user, amount)
   end
 end
@@ -11,8 +11,24 @@ class User
   end
 end
 
+class OrderProcessor
+  def initialize(user, amount)
+    @user = user
+    @amount = amount
+    @stripe_provider = StripeProvider.new
+  end
+
+  def process_order
+    if @stripe_provider.charge(@user, @amount)
+      "Payment successful"
+    else
+      "Payment failed"
+    end
+  end
+end
+
 class Payment
-  def initialize(provider: StripProvider.new)
+  def initialize(provider: StripeProvider.new)
     @provider = provider
   end
 
@@ -23,7 +39,7 @@ end
 
 class Subscription
   def self.charge(user, amount)
-    provider = StripProvider.new
+    provider = StripeProvider.new
     provider.charge(user, amount)
     user.balance = (user.balance - amount)
     user.last_transaction_at = Time.now

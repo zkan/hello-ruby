@@ -21,7 +21,7 @@ class SubscriptionTest < Minitest::Test
   end
 
   def test_charge_adjusts_balance
-    StripProvider.stub :new, @mock_provider do
+    StripeProvider.stub :new, @mock_provider do
       Time.stub(:now, Time.new(2024, 1, 1)) do
         user = User.new(balance: 300)
         assert Subscription.charge(user, 100)
@@ -30,5 +30,27 @@ class SubscriptionTest < Minitest::Test
       end
     end
     assert_mock @mock_provider
+  end
+end
+
+class OrderProcessorTest < Minitest::Test
+  def setup
+    @user = User.new
+    @amount = 100
+    @order_processor = OrderProcessor.new(@user, @amount)
+  end
+
+  def test_process_order_success
+    @order_processor.instance_variable_get(:@stripe_provider).stub(:charge, true) do
+      result = @order_processor.process_order
+      assert_equal "Payment successful", result
+    end
+  end
+
+  def test_process_order_failure
+    @order_processor.instance_variable_get(:@stripe_provider).stub(:charge, false) do
+      result = @order_processor.process_order
+      assert_equal "Payment failed", result
+    end
   end
 end
